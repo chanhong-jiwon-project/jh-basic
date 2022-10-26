@@ -1,10 +1,12 @@
 package com.jhs.crud.auth.domain;
 
+import com.jhs.crud.issue.domain.Issue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +16,7 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long idx;
 
     @Column(nullable = false)
     private String email;
@@ -24,6 +26,9 @@ public class User {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Issue> issues;
 
     public User(String email, String pw, String name) {
         this.email = email;
