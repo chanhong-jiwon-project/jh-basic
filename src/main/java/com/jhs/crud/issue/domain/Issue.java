@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,16 +21,20 @@ public class Issue {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx;
-
-    @ManyToOne
-    @JoinColumn(name = "user_idx")
-    private User user;
-
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = true)
+    private String relation_mem;
+
+    @Column(nullable = true)
+    private String  manegemanet_mem;
 
     @Column(nullable = false)
     private LocalDateTime reg_dt;
@@ -40,6 +45,7 @@ public class Issue {
     public void update(IssueRequestDto issueRequestDto) {
         this.title = issueRequestDto.getTitle();
         this.content = issueRequestDto.getContent();
+        this.relation_mem = String.join(",", issueRequestDto.getRelation_mem());
         this.upd_dt = LocalDateTime.now();
     }
 

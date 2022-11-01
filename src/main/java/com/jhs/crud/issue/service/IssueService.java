@@ -1,7 +1,7 @@
 package com.jhs.crud.issue.service;
 
 import com.jhs.crud.auth.config.UserDetailsImpl;
-import com.jhs.crud.auth.domain.User;
+import com.jhs.crud.auth.repository.UserRepository;
 import com.jhs.crud.issue.domain.Issue;
 import com.jhs.crud.issue.dto.IssueResponseDto;
 import com.jhs.crud.issue.dto.IssueRequestDto;
@@ -20,31 +20,51 @@ import java.util.List;
 public class IssueService {
 
     private final IssueRepository issueRepository;
+    private final UserRepository userRepository;
 
+    /**
+     * 이슈 등록
+     * */
     @Transactional
     public ResponseEntity<?> setIssue(IssueRequestDto issueRequestDto, UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
+        String relation_mem = String.join(",", issueRequestDto.getRelation_mem());
+        List<String> relationList = issueRequestDto.getRelation_mem();
+
+        for (String r_mem : relationList) {
+            userRepository.findByEmail(r_mem).orElseThrow(
+                    () -> new IllegalArgumentException("등록되지 않은 회원 입니다")
+            );
+        }
 
         issueRepository.save(Issue.builder()
                 .title(issueRequestDto.getTitle())
                 .content(issueRequestDto.getContent())
                 .reg_dt(LocalDateTime.now())
-                .user(user)
+                .email(userDetails.getUsername())
+                .relation_mem(relation_mem)
                 .build());
 
         return ResponseEntity.ok("등록이 완료 되었 습니다.");
     }
 
+    /**
+     * 이슈 목록 조회
+     * */
     public ResponseEntity<?> getAllIssue() {
         List<IssueResponseDto> responseDtos = new ArrayList<>();
+
 
         for (Issue issue : issueRepository.findAll()){
             IssueResponseDto issueResponseDto = new IssueResponseDto(issue);
             responseDtos.add(issueResponseDto);
         }
+
         return ResponseEntity.ok(responseDtos);
     }
 
+    /**
+     * 이슈 상세조회
+     * */
     public ResponseEntity<?> getIssue(Long issue_idx) {
         Issue issue = issueRepository.findById(issue_idx).orElseThrow(
                 () -> new NullPointerException("게시물이 존재하지 않습니다.")
@@ -54,15 +74,31 @@ public class IssueService {
         return ResponseEntity.ok(issueResponseDto);
     }
 
+    /**
+     * 이슈 수정
+     * */
     @Transactional
     public ResponseEntity<?> modifyIssue(Long issue_idx, IssueRequestDto issueRequestDto) {
         Issue issue = issueRepository.findById(issue_idx).orElseThrow(
                 () -> new NullPointerException("게시물이 존재하지 않습니다.")
         );
+
+        if (issueRequestDto.getTitle() == null) {
+            issueRequestDto.setTitle(issue.getTitle());
+        }
+        if (issueRequestDto.getContent() == null) {
+            issueRequestDto.setContent(issue.getContent());
+        }
+        if (issueRequestDto.getRelation_mem() == null) {
+            issueRequestDto.setRelation_mem(List.of(issue.getRelation_mem().split(",")));
+        }
         issue.update(issueRequestDto);
         return ResponseEntity.ok("수정이 완료 되었습니다.");
     }
 
+    /**
+     * 이슈 삭제
+     * */
     public ResponseEntity<?> deleteIssue(Long issue_idx) {
         Issue issue = issueRepository.findById(issue_idx).orElseThrow(
                 () -> new NullPointerException("게시물이 존재하지 않습니다")

@@ -27,9 +27,6 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Issue> issues;
-
     public User(String email, String pw, String name) {
         this.email = email;
         this.pw = pw;
