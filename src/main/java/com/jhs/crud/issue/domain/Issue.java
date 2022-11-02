@@ -46,6 +46,7 @@ public class Issue {
         this.title = issueRequestDto.getTitle();
         this.content = issueRequestDto.getContent();
         this.relation_mem = String.join(",", issueRequestDto.getRelation_mem());
+        this.manegemanet_mem = issueRequestDto.getManagement_mem();
         this.upd_dt = LocalDateTime.now();
     }
 

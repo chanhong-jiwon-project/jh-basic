@@ -32,9 +32,12 @@ public class IssueService {
 
         for (String r_mem : relationList) {
             userRepository.findByEmail(r_mem).orElseThrow(
-                    () -> new IllegalArgumentException("등록되지 않은 회원 입니다")
+                    () -> new IllegalArgumentException("등록되지 않은 관련자(회원) 입니다")
             );
         }
+
+        userRepository.findByEmail(issueRequestDto.getManagement_mem()).orElseThrow(
+                () -> new IllegalArgumentException("등록되지 않은 담당자(회원) 입니다"));
 
         issueRepository.save(Issue.builder()
                 .title(issueRequestDto.getTitle())
@@ -42,6 +45,7 @@ public class IssueService {
                 .reg_dt(LocalDateTime.now())
                 .email(userDetails.getUsername())
                 .relation_mem(relation_mem)
+                .manegemanet_mem(issueRequestDto.getManagement_mem())
                 .build());
 
         return ResponseEntity.ok("등록이 완료 되었 습니다.");
@@ -91,6 +95,9 @@ public class IssueService {
         }
         if (issueRequestDto.getRelation_mem() == null) {
             issueRequestDto.setRelation_mem(List.of(issue.getRelation_mem().split(",")));
+        }
+        if (issueRequestDto.getManagement_mem() ==null) {
+            issueRequestDto.setManagement_mem(issue.getManegemanet_mem());
         }
         issue.update(issueRequestDto);
         return ResponseEntity.ok("수정이 완료 되었습니다.");

@@ -11,4 +11,5 @@ public class IssueRequestDto {
     private String title;
     private String content;
     private List<String> relation_mem;
+    private String management_mem;
 }

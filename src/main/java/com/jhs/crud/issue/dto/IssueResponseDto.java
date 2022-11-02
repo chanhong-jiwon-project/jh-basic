@@ -14,6 +14,7 @@ public class IssueResponseDto {
     private String content;
     private String email;
     private List<String> relation_mem;
+    private String management_mem;
     private LocalDateTime reg_dt;
 
     public IssueResponseDto(Issue issue) {
@@ -23,6 +24,7 @@ public class IssueResponseDto {
         this.email = issue.getEmail();
         this.reg_dt = issue.getReg_dt();
         this.relation_mem = List.of(issue.getRelation_mem().split(","));
+        this.management_mem = issue.getManegemanet_mem();
 
     }
 }
