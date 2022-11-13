@@ -34,7 +34,7 @@ public class IssueController {
         return issueService.modifyIssue(issue_idx, issueRequestDto);
     }
 
-    @DeleteMapping(value = "issue/{issue_idx}")
+    @DeleteMapping(value = "/issue/{issue_idx}")
     public ResponseEntity<?> deleteIssue(@PathVariable Long issue_idx) {
         return issueService.deleteIssue(issue_idx);
     }
