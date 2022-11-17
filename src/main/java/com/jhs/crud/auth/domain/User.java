@@ -1,10 +1,10 @@
 package com.jhs.crud.auth.domain;
 
+
 import com.jhs.crud.issue.domain.Issue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -17,6 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idx;
+
 
     @Column(nullable = false)
     private String email;
