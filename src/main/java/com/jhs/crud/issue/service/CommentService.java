@@ -9,6 +9,7 @@ import com.jhs.crud.issue.repository.IssueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final IssueRepository issueRepository;
 
+    @Transactional
     public ResponseEntity<?> setComment(CommentRequestDto commentRequestDto, Long issue_idx, UserDetailsImpl userDetails) {
 
         issueRepository.findById(issue_idx).orElseThrow(
@@ -28,11 +30,11 @@ public class CommentService {
         );
 
         commentRepository.save(Comment.builder()
-                        .comment(commentRequestDto.getComment())
-                        .email(userDetails.getUsername())
-                        .reg_dt(LocalDateTime.now())
-                        .issueIdx(issue_idx)
-                        .build());
+                .comment(commentRequestDto.getComment())
+                .email(userDetails.getUsername())
+                .reg_dt(LocalDateTime.now())
+                .issueIdx(issue_idx)
+                .build());
 
         return ResponseEntity.ok("댓글이 입력 되었습니다.");
     }
@@ -54,20 +56,27 @@ public class CommentService {
                     .build());
         }
 
-       return ResponseEntity.ok(commentResponseDtoList);
+        return ResponseEntity.ok(commentResponseDtoList);
     }
 
+    @Transactional
     public ResponseEntity<?> putComment(Long comment_idx, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
 
         Comment comment = commentRepository.findById(comment_idx).orElseThrow(
                 () -> new NullPointerException("댓글이 존재하지 않습니다.")
         );
 
+        System.out.println(userDetails.getUser().getEmail());
+
+        if (!userDetails.getUser().getEmail().equals(comment.getEmail())) {
+            throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
+        }
+
         if (commentRequestDto.getComment() == null) {
             throw new IllegalArgumentException("내용을 입력해 주세요");
         }
-        comment.update(commentRequestDto);
 
+        comment.update(commentRequestDto);
         return ResponseEntity.ok("수정이 완료 되었습니다.");
     }
 
@@ -77,6 +86,6 @@ public class CommentService {
         );
         commentRepository.delete(comment);
 
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("삭제 완료 되었습니다.");
     }
 }

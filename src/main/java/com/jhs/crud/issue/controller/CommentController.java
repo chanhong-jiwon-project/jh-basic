@@ -26,14 +26,14 @@ public class CommentController {
         return commentService.getComment(issue_idx);
     }
 
-    @PutMapping(value = "/issue/{issue_idx}/{comment_idx}/comment")
+    @PutMapping(value = "/issue/{comment_idx}/comment")
     public ResponseEntity<?> putComment(@PathVariable Long comment_idx,
                                         @RequestBody CommentRequestDto commentRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.putComment(comment_idx, commentRequestDto, userDetails);
     }
 
-    @DeleteMapping(value = "/issue/{issue_idx}/{comment_idx}/comment")
+    @DeleteMapping(value = "/issue/{comment_idx}/comment")
     public ResponseEntity<?> deleteComment(@PathVariable Long commnet_idx) {
         return commentService.deleteComment(commnet_idx);
     }
