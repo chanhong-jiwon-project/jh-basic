@@ -22,6 +22,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final IssueRepository issueRepository;
 
+    /**
+     * 댓글달기
+     * */
     @Transactional
     public ResponseEntity<?> setComment(CommentRequestDto commentRequestDto, Long issue_idx, UserDetailsImpl userDetails) {
 
@@ -39,6 +42,9 @@ public class CommentService {
         return ResponseEntity.ok("댓글이 입력 되었습니다.");
     }
 
+    /**
+     * 댓글 가져오기
+     * */
     public ResponseEntity<?> getComment(Long issue_idx) {
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
@@ -59,6 +65,9 @@ public class CommentService {
         return ResponseEntity.ok(commentResponseDtoList);
     }
 
+    /**
+     * 댓글 수정
+     * */
     @Transactional
     public ResponseEntity<?> putComment(Long comment_idx, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
 
@@ -80,6 +89,9 @@ public class CommentService {
         return ResponseEntity.ok("수정이 완료 되었습니다.");
     }
 
+    /**
+     * 댓글 삭제
+     * */
     public ResponseEntity<?> deleteComment(Long commnet_idx) {
         Comment comment = commentRepository.findById(commnet_idx).orElseThrow(
                 () -> new NullPointerException("댓글이 존재하지 않습니다.")
